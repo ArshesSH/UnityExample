@@ -11,9 +11,11 @@ public class PlayerMain : MonoBehaviour
     float yAxis;
     bool isShiftOn;
     bool isSpacebarOn;
-    bool isJumpNow = false;
+    bool isJumpNow;
+    bool isDodgeOn;
 
     Vector3 vMove;
+    Vector3 dodgeVec;
     Rigidbody rigid;
     Animator animPlayer;
 
@@ -31,6 +33,7 @@ public class PlayerMain : MonoBehaviour
         Move();
         Turn();
         Jump();
+        Dodge();
     }
 
     /*----------------------------------------------------------------------------------*/
@@ -45,6 +48,10 @@ public class PlayerMain : MonoBehaviour
     void Move()
     {
         vMove = new Vector3(xAxis, 0, yAxis).normalized;
+        if(isDodgeOn)
+        {
+            vMove = dodgeVec;
+        }
         transform.position += vMove * speed * (isShiftOn ? 1.7f : 1f) * Time.deltaTime;
 
         animPlayer.SetBool("isMoving", vMove != Vector3.zero);
@@ -58,7 +65,7 @@ public class PlayerMain : MonoBehaviour
 
     void Jump()
     {
-        if(isSpacebarOn && !isJumpNow)
+        if(isSpacebarOn && vMove == Vector3.zero && !isJumpNow && !isDodgeOn)
         {
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
             animPlayer.SetBool("isJump", true);
@@ -67,6 +74,24 @@ public class PlayerMain : MonoBehaviour
         }
     }
 
+    void Dodge()
+    {
+        if (isSpacebarOn && vMove != Vector3.zero && !isJumpNow && !isDodgeOn)
+        {
+            dodgeVec = vMove;
+            speed *= 2.0f;
+            animPlayer.SetTrigger("doDodge");
+            isDodgeOn = true;
+
+            Invoke("DodgeOut", 0.4f);
+        }
+    }
+
+    void DodgeOut()
+    {
+        isDodgeOn = false;
+        speed *= 0.5f;
+    }
     
     void OnCollisionEnter(Collision collision)
     {
