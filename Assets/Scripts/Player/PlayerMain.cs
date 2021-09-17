@@ -6,7 +6,7 @@ public class PlayerMain : MonoBehaviour
 {
     public float speed;
     const float turnSpeed = 30.0f;
-    const float jumpPower = 10.0f;
+    const float jumpPower = 12.0f;
     float xAxis;
     float yAxis;
     bool isShiftOn;
@@ -61,6 +61,8 @@ public class PlayerMain : MonoBehaviour
         if(isSpacebarOn && !isJumpNow)
         {
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            animPlayer.SetBool("isJump", true);
+            animPlayer.SetTrigger("doJump");
             isJumpNow = true;
         }
     }
@@ -70,6 +72,7 @@ public class PlayerMain : MonoBehaviour
     {
         if(collision.gameObject.tag == "Floor")
         {
+            animPlayer.SetBool("isJump", false);
             isJumpNow = false;
         }
     }
