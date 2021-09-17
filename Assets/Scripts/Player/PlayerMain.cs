@@ -5,13 +5,13 @@ using UnityEngine;
 public class PlayerMain : MonoBehaviour
 {
     public float speed;
-    const float fTurnSpeed = 30.0f;
-    const float fJumpPower = 10.0f;
-    float fXAxis;
-    float fYAxis;
-    bool bIsShiftOn;
-    bool bIsSpacebarOn;
-    public bool bIsJumpNow = false;
+    const float turnSpeed = 30.0f;
+    const float jumpPower = 10.0f;
+    float xAxis;
+    float yAxis;
+    bool isShiftOn;
+    bool isSpacebarOn;
+    bool isJumpNow = false;
 
     Vector3 vMove;
     Rigidbody rigid;
@@ -36,19 +36,19 @@ public class PlayerMain : MonoBehaviour
     /*----------------------------------------------------------------------------------*/
     void GetInput()
     {
-        fXAxis = Input.GetAxisRaw("Horizontal");
-        fYAxis = Input.GetAxisRaw("Vertical");
-        bIsShiftOn = Input.GetButton("Sprint");
-        bIsSpacebarOn = Input.GetButton("Jump");
+        xAxis = Input.GetAxisRaw("Horizontal");
+        yAxis = Input.GetAxisRaw("Vertical");
+        isShiftOn = Input.GetButton("Sprint");
+        isSpacebarOn = Input.GetButton("Jump");
     }
 
     void Move()
     {
-        vMove = new Vector3(fXAxis, 0, fYAxis).normalized;
-        transform.position += vMove * speed * (bIsShiftOn ? 1.7f : 1f) * Time.deltaTime;
+        vMove = new Vector3(xAxis, 0, yAxis).normalized;
+        transform.position += vMove * speed * (isShiftOn ? 1.7f : 1f) * Time.deltaTime;
 
-        animPlayer.SetBool("bIsMoving", vMove != Vector3.zero);
-        animPlayer.SetBool("bIsSprint", bIsShiftOn);
+        animPlayer.SetBool("isMoving", vMove != Vector3.zero);
+        animPlayer.SetBool("isSprint", isShiftOn);
     }
     
     void Turn()
@@ -58,10 +58,10 @@ public class PlayerMain : MonoBehaviour
 
     void Jump()
     {
-        if(bIsSpacebarOn && !bIsJumpNow)
+        if(isSpacebarOn && !isJumpNow)
         {
-            rigid.AddForce(Vector3.up * fJumpPower, ForceMode.Impulse);
-            bIsJumpNow = true;
+            rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            isJumpNow = true;
         }
     }
 
@@ -70,7 +70,7 @@ public class PlayerMain : MonoBehaviour
     {
         if(collision.gameObject.tag == "Floor")
         {
-            bIsJumpNow = false;
+            isJumpNow = false;
         }
     }
     
