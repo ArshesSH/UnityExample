@@ -187,13 +187,48 @@ public class PlayerMain : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Item")
+        {
+            Item item = other.GetComponent<Item>();
+            switch (item.type)
+            {
+                case Item.Type.Ammo:
+                    ammoCurrent += item.value;
+                    if (ammoCurrent > ammoMax)
+                        ammoCurrent = ammoMax;
+                    break;
+
+                case Item.Type.Coin:
+                    coinCurrent += item.value;
+                    if (coinCurrent > coinMax)
+                        coinCurrent = coinMax;
+                    break;
+
+                case Item.Type.Grenade:
+                    granadesCurrent += item.value;
+                    if (granadesCurrent > granadesMax)
+                        granadesCurrent = granadesMax;
+                    break;
+
+                case Item.Type.Heart:
+                    healthCurrent += item.value;
+                    if (healthCurrent > healthMax)
+                        healthCurrent = healthMax;
+                    break;
+            }
+            Destroy(other.gameObject);
+        }
+    }
+
+
     private void OnTriggerStay(Collider other)
     {
         if(other.tag == "Weapon")
         {
             nearObject = other.gameObject;
         }
-        Debug.Log(nearObject.name);
     }
 
     private void OnTriggerExit(Collider other)
