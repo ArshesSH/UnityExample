@@ -16,6 +16,18 @@ public class PlayerMain : MonoBehaviour
     public float speed;
     public GameObject[] weapons;
     public bool[] hasWeapons;
+
+    public int ammoCurrent;
+    public int coinCurrent;
+    public int healthCurrent;
+    public int granadesCurrent;
+
+    public int ammoMax;
+    public int coinMax;
+    public int healthMax;
+    public int granadesMax;
+
+
     const float turnSpeed = 30.0f;
     const float jumpPower = 12.0f;
     float xAxis;

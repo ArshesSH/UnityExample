@@ -1213,6 +1213,14 @@ MonoBehaviour:
   - {fileID: 1056271426}
   - {fileID: 586243711}
   hasWeapons: 000000
+  ammoCurrent: 0
+  coinCurrent: 0
+  healthCurrent: 100
+  granadesCurrent: 0
+  ammoMax: 999
+  coinMax: 99999
+  healthMax: 100
+  granadesMax: 4
 --- !u!4 &1083599700 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5903297864969995812, guid: 8f5e135a19626f544908fc8f156144b9, type: 3}
