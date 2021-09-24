@@ -14,8 +14,9 @@ public class PlayerMain : MonoBehaviour
     GameObject equipWeapon;
 
     public float speed;
-    public GameObject[] weapons;
     public bool[] hasWeapons;
+    public GameObject[] weapons;
+    public GameObject[] grenades;
 
     public int ammoCurrent;
     public int coinCurrent;
@@ -207,6 +208,7 @@ public class PlayerMain : MonoBehaviour
                     break;
 
                 case Item.Type.Grenade:
+                    grenades[granadesCurrent].SetActive(true);
                     granadesCurrent += item.value;
                     if (granadesCurrent > granadesMax)
                         granadesCurrent = granadesMax;
