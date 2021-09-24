@@ -12,14 +12,16 @@ public class PlayerMain : MonoBehaviour
 
     GameObject nearObject;
 
-
     public float speed;
+    public GameObject[] weapons;
+    public bool[] hasWeapons;
     const float turnSpeed = 30.0f;
     const float jumpPower = 12.0f;
     float xAxis;
     float yAxis;
     bool isShiftOn;
     bool isSpacebarOn;
+    bool isInteractiveKeyOn;
     bool isJumpNow;
     bool isDodgeOn;
 
@@ -38,6 +40,7 @@ public class PlayerMain : MonoBehaviour
         Turn();
         Jump();
         Dodge();
+        Interaction();
     }
 
     /*----------------------------------------------------------------------------------*/
@@ -46,7 +49,8 @@ public class PlayerMain : MonoBehaviour
         xAxis = Input.GetAxisRaw("Horizontal");
         yAxis = Input.GetAxisRaw("Vertical");
         isShiftOn = Input.GetButton("Sprint");
-        isSpacebarOn = Input.GetButton("Jump");
+        isSpacebarOn = Input.GetButtonDown("Jump");
+        isInteractiveKeyOn = Input.GetButtonDown("Interaction");
     }
 
     void Move()
@@ -95,6 +99,21 @@ public class PlayerMain : MonoBehaviour
     {
         isDodgeOn = false;
         speed *= 0.5f;
+    }
+
+    void Interaction()
+    {
+        if(isInteractiveKeyOn && nearObject != null && !isJumpNow && !isDodgeOn)
+        {
+            if(nearObject.tag == "Weapon")
+            {
+                Item item = nearObject.GetComponent<Item>();
+                int weaponIndex = item.value;
+                hasWeapons[weaponIndex] = true;
+
+                Destroy(nearObject);
+            }
+        }
     }
     
     void OnCollisionEnter(Collision collision)
