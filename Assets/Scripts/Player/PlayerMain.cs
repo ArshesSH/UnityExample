@@ -11,6 +11,7 @@ public class PlayerMain : MonoBehaviour
     Animator animPlayer;
 
     GameObject nearObject;
+    GameObject equipWeapon;
 
     public float speed;
     public GameObject[] weapons;
@@ -19,11 +20,20 @@ public class PlayerMain : MonoBehaviour
     const float jumpPower = 12.0f;
     float xAxis;
     float yAxis;
-    bool isShiftOn;
-    bool isSpacebarOn;
-    bool isInteractiveKeyOn;
+    int currentWeaponIndex = -1;
+
+    // Key State
+    bool ButtonSprint;
+    bool ButtonJump;
+    bool ButtonInteractive;
+    bool ButtonWeapon1;
+    bool ButtonWeapon2;
+    bool ButtonWeapon3;
+
+    // Player State
     bool isJumpNow;
     bool isDodgeOn;
+    bool isChangeWeaponNow;
 
     // Start is called before the first frame update
     void Awake()
@@ -40,6 +50,7 @@ public class PlayerMain : MonoBehaviour
         Turn();
         Jump();
         Dodge();
+        ChangeWeapon();
         Interaction();
     }
 
@@ -48,9 +59,12 @@ public class PlayerMain : MonoBehaviour
     {
         xAxis = Input.GetAxisRaw("Horizontal");
         yAxis = Input.GetAxisRaw("Vertical");
-        isShiftOn = Input.GetButton("Sprint");
-        isSpacebarOn = Input.GetButtonDown("Jump");
-        isInteractiveKeyOn = Input.GetButtonDown("Interaction");
+        ButtonSprint = Input.GetButton("Sprint");
+        ButtonJump = Input.GetButtonDown("Jump");
+        ButtonInteractive = Input.GetButtonDown("Interaction");
+        ButtonWeapon1 = Input.GetButtonDown("Weapon1");
+        ButtonWeapon2 = Input.GetButtonDown("Weapon2");
+        ButtonWeapon3 = Input.GetButtonDown("Weapon3");
     }
 
     void Move()
@@ -60,10 +74,16 @@ public class PlayerMain : MonoBehaviour
         {
             vMove = dodgeVec;
         }
-        transform.position += vMove * speed * (isShiftOn ? 1.7f : 1f) * Time.deltaTime;
+
+        if(isChangeWeaponNow)
+        {
+            vMove = Vector3.zero;
+        }
+
+        transform.position += vMove * speed * (ButtonSprint ? 1.7f : 1f) * Time.deltaTime;
 
         animPlayer.SetBool("isMoving", vMove != Vector3.zero);
-        animPlayer.SetBool("isSprint", isShiftOn);
+        animPlayer.SetBool("isSprint", ButtonSprint);
     }
     
     void Turn()
@@ -73,7 +93,7 @@ public class PlayerMain : MonoBehaviour
 
     void Jump()
     {
-        if(isSpacebarOn && vMove == Vector3.zero && !isJumpNow && !isDodgeOn)
+        if(ButtonJump && vMove == Vector3.zero && !isJumpNow && !isDodgeOn && !isChangeWeaponNow)
         {
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
             animPlayer.SetBool("isJump", true);
@@ -84,7 +104,7 @@ public class PlayerMain : MonoBehaviour
 
     void Dodge()
     {
-        if (isSpacebarOn && vMove != Vector3.zero && !isJumpNow && !isDodgeOn)
+        if (ButtonJump && vMove != Vector3.zero && !isJumpNow && !isDodgeOn && !isChangeWeaponNow)
         {
             dodgeVec = vMove;
             speed *= 2.0f;
@@ -101,9 +121,39 @@ public class PlayerMain : MonoBehaviour
         speed *= 0.5f;
     }
 
+    void ChangeWeapon()
+    {
+        int weaponIndex = -1;
+        if (ButtonWeapon1 && hasWeapons[0]) weaponIndex = 0;
+        if (ButtonWeapon2 && hasWeapons[1]) weaponIndex = 1;
+        if (ButtonWeapon3 && hasWeapons[2]) weaponIndex = 2;
+
+
+        if ( (ButtonWeapon1 || ButtonWeapon2 || ButtonWeapon3) && !isJumpNow && !isDodgeOn && weaponIndex != -1 && currentWeaponIndex != weaponIndex )
+        {
+            if(equipWeapon != null)
+            {
+                equipWeapon.SetActive(false);
+            }
+            equipWeapon = weapons[weaponIndex];
+            equipWeapon.SetActive(true);
+
+            currentWeaponIndex = weaponIndex;
+
+            animPlayer.SetTrigger("doChangeWeapon");
+            isChangeWeaponNow = true;
+            Invoke("ChangeWeaponEnd", 0.4f);
+        }
+    }
+
+    void ChangeWeaponEnd()
+    {
+        isChangeWeaponNow = false;
+    }
+
     void Interaction()
     {
-        if(isInteractiveKeyOn && nearObject != null && !isJumpNow && !isDodgeOn)
+        if(ButtonInteractive && nearObject != null && !isJumpNow && !isDodgeOn && !isChangeWeaponNow)
         {
             if(nearObject.tag == "Weapon")
             {
