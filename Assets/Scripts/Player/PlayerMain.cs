@@ -4,6 +4,15 @@ using UnityEngine;
 
 public class PlayerMain : MonoBehaviour
 {
+    Vector3 vMove;
+    Vector3 dodgeVec;
+
+    Rigidbody rigid;
+    Animator animPlayer;
+
+    GameObject nearObject;
+
+
     public float speed;
     const float turnSpeed = 30.0f;
     const float jumpPower = 12.0f;
@@ -13,11 +22,6 @@ public class PlayerMain : MonoBehaviour
     bool isSpacebarOn;
     bool isJumpNow;
     bool isDodgeOn;
-
-    Vector3 vMove;
-    Vector3 dodgeVec;
-    Rigidbody rigid;
-    Animator animPlayer;
 
     // Start is called before the first frame update
     void Awake()
@@ -101,5 +105,21 @@ public class PlayerMain : MonoBehaviour
             isJumpNow = false;
         }
     }
-    
+
+    private void OnTriggerStay(Collider other)
+    {
+        if(other.tag == "Weapon")
+        {
+            nearObject = other.gameObject;
+        }
+        Debug.Log(nearObject.name);
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Weapon")
+        {
+            nearObject = null;
+        }
+    }
 }
